@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/raleway";
 @import "@fontsource-variable/geist";
+@layer base {
+  @import "@xyflow/react/dist/style.css";
+}
 
 @custom-variant dark (&:is(.dark *));
 
