@@ -162,9 +162,9 @@ tasks:
         INDEX_HTML=frontend/index.html
         if [ -f "$INDEX_HTML" ]; then
           if ! grep -q 'href="/puppertino/puppertino.css"' "$INDEX_HTML"; then
-            # Insert Puppertino link tag after style.css link
+            # Insert Puppertino link tag after index.css link
             awk '
-              /href="\/style.css"\/?/ && !x { print; print "    <link rel=\"stylesheet\" href=\"/puppertino/puppertino.css\"/>"; x=1; next }1
+              /href="\/src\/index.css"\/?/ && !x { print; print "    <link rel=\"stylesheet\" href=\"/puppertino/puppertino.css\"/>"; x=1; next }1
             ' "$INDEX_HTML" > "$INDEX_HTML.tmp" && mv "$INDEX_HTML.tmp" "$INDEX_HTML"
           fi
           # Replace default .btn with Puppertino primary button classes if present

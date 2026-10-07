@@ -1,5 +1,5 @@
-import path from "path"
-import tailwindcss from "@tailwindcss/vite"
+import path from "path";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import wails from "@wailsio/runtime/plugins/vite";
@@ -14,9 +14,15 @@ export default defineConfig({
   plugins: [react(), wails("./bindings"), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@customComponents": path.resolve(__dirname, "./src/components/custom"),
-      "@shadcnComponents": path.resolve(__dirname, "./src/components/ui"),
+      "@": path.resolve(import.meta.dirname, "./src"),
+      "@customComponents": path.resolve(
+        import.meta.dirname,
+        "./src/components/custom",
+      ),
+      "@shadcnComponents": path.resolve(
+        import.meta.dirname,
+        "./src/components/ui",
+      ),
     },
   },
 });
