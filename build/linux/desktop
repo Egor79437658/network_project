@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=network_project
+Comment=A network_project application
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/network_project %u
+Terminal=false
+Type=Application
+Icon=network_project
+Categories=Utility;
+StartupWMClass=network_project
+
+ 

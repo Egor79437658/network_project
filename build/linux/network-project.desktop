@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=network-project
+Exec=network-project
+Icon=network-project
+Categories=Development;
+Terminal=false
+Keywords=wails
+Version=1.0
+StartupNotify=false
