@@ -1,13 +1,17 @@
 import { create } from "zustand";
 
-interface ErrorProcessingState {
+export interface ErrorProcessingControls {
+  totalPacketsToStop: number;
+  totalUndetectedErrorsToStop: number;
+}
+
+interface ErrorProcessingState extends ErrorProcessingControls {
   detectedErrors: number;
   undetectedErrors: number;
   totalTransmitted: number;
+}
 
-  totalPacketsToStop: number;
-  totalUndetectedErrorsToStop: number;
-
+interface ErrorProcessingStore extends ErrorProcessingState {
   setDetectedErrors: (errors: number) => void;
   setUndetectedErrors: (errors: number) => void;
   setTotalTransmitted: (total: number) => void;
@@ -16,7 +20,7 @@ interface ErrorProcessingState {
   setTotalUndetectedErrorsToStop: (total: number) => void;
 }
 
-export const useErrorProcessingStore = create<ErrorProcessingState>()(
+export const useErrorProcessingStore = create<ErrorProcessingStore>()(
   (set) => ({
     detectedErrors: 0,
     undetectedErrors: 0,

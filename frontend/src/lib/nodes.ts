@@ -1,13 +1,13 @@
 import { Node } from "@xyflow/react";
 
 const middleY = Math.max((window.innerHeight - 24) / 2, 0);
-const gap = 50;
-const sourceX = 50;
+const gap = 20;
+const sourceX = 20;
 const coderX = sourceX + 200 + gap;
 const networlLineX = coderX + 200 + gap;
 const decoderX = networlLineX + 480 + gap;
 const errorProcessingX = decoderX + 200 + gap;
-const finishX = errorProcessingX + 400 + gap;
+const finishX = errorProcessingX + 520 + gap;
 const finishY = middleY - 53;
 const finishGap = 150;
 
@@ -21,13 +21,13 @@ export const defaultNodes: Node[] = [
   {
     id: "n2",
     data: {},
-    position: { x: coderX, y: middleY - 21.5 },
+    position: { x: coderX, y: middleY - 33.5 },
     type: "CoderNode",
   },
   {
     id: "n3",
     data: {},
-    position: { x: networlLineX, y: middleY },
+    position: { x: networlLineX, y: middleY - 12 },
     type: "NetworkLineNode",
   },
   {

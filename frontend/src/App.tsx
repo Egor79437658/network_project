@@ -6,7 +6,7 @@ import {
 import { MainPage } from "./pages/MainPage";
 import { Layout } from "@customComponents/Layout";
 import { ErrorPage } from "./pages/ErrorPage";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 function App() {
   const routes = [

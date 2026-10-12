@@ -1,9 +1,13 @@
+import { transformPolinomial } from "@/lib/utils";
 import { create } from "zustand";
 
-interface CoderState {
+export interface CoderState {
   dataLength: number;
   polinomial: string;
   polinomialMode: "array" | "binary";
+}
+
+interface CoderStore extends CoderState {
   setPolinomial: (polinomial: string) => void;
   setDataLength: (dataLenth: number) => void;
   setPolinomialMode: (mode: "array" | "binary") => void;
@@ -12,7 +16,7 @@ interface CoderState {
 // const arrayRegex = /^\[(\d+,\s+)*(\d+)\]$/
 const binaryRegex = /^[0-1]*$/;
 
-export const useCoderStore = create<CoderState>()((set) => ({
+export const useCoderStore = create<CoderStore>()((set) => ({
   dataLength: 15,
   polinomial: "[5, 3, 0]",
   polinomialMode: "array",
@@ -21,7 +25,7 @@ export const useCoderStore = create<CoderState>()((set) => ({
       if (polinomialMode === "array") {
         let arr: any;
         try {
-          arr = JSON.parse(polinomialMode);
+          arr = JSON.parse(polinomial || "[]");
         } catch (err) {
           console.error("Error parsing polinomial:", err);
           throw new Error("Неправильное представление в виде массива");
@@ -36,10 +40,8 @@ export const useCoderStore = create<CoderState>()((set) => ({
             "Передаваемое значение должно быть строкой в виде массива ('[5,3,0]')",
           );
         }
-        if (arr.length > dataLength) {
-          throw new Error(
-            "полином не может иsметь степень больше длинны пакета",
-          );
+        if (Math.max(...arr) >= dataLength) {
+          throw new Error("полином должен иметь степень меньше длинны пакета");
         }
         // if (arr.length === 0) {
         //   throw new Error("полином не может иметь нулевую степень");
@@ -48,6 +50,9 @@ export const useCoderStore = create<CoderState>()((set) => ({
         if (!binaryRegex.test(polinomial)) {
           console.error("polinomial failed regex: ", polinomial);
           throw new Error("Полином должен представлять собой бинарное число");
+        }
+        if (polinomial.length >= dataLength) {
+          throw new Error("полином должен иметь степень меньше длинны пакета");
         }
         // if (polinomial.length === 0) {
         //   throw new Error("полином не может иметь нулевую степень");
@@ -66,23 +71,7 @@ export const useCoderStore = create<CoderState>()((set) => ({
     set(({ polinomial, polinomialMode: oldMode }) => {
       let newValue: string;
       if (oldMode !== polinomialMode) {
-        if (oldMode === "array") {
-          const arr: number[] = JSON.parse(polinomialMode);
-          newValue = arr
-            .sort((a, b) => b - a)
-            .reduce((sum, val) => sum + 2 ** val, 0)
-            .toString(2);
-        } else {
-          newValue = JSON.stringify(
-            polinomial
-              .split("")
-              .map((c, i) => {
-                if (c == "1") return i;
-              })
-              .filter((v) => v !== undefined)
-              .toString(),
-          );
-        }
+        newValue = transformPolinomial(polinomialMode, polinomial)
       } else {
         newValue = polinomial;
       }

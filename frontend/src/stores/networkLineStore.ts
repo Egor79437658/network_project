@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface NetworlLineState {
+export interface NetworlLineState {
   mode: "independed" | "guilbert";
   independedPropability: number;
 
@@ -9,15 +9,19 @@ interface NetworlLineState {
   propabilityToGoBad: number;
   propabilityToGoGood: number;
 
+}
+
+interface NetworkLineStore extends NetworlLineState {
   setMode: (mode: "independed" | "guilbert") => void;
   setIndependedPropability: (propability: number) => void;
   setPropabilityInGoodCondition: (propability: number) => void;
   setPropabilityInBadCondition: (propability: number) => void;
   setPropabilityToGoBad: (propability: number) => void;
   setPropabilityToGoGood: (propability: number) => void;
+
 }
 
-export const useNetworkLineStore = create<NetworlLineState>()((set) => ({
+export const useNetworkLineStore = create<NetworkLineStore>()((set) => ({
   mode: "independed",
   independedPropability: 0.01,
 

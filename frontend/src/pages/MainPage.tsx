@@ -1,6 +1,10 @@
 import { useTheme } from "@/components/theme-provider";
 import { defaultEdges } from "@/lib/edges";
+import { startSimulation } from "@/lib/launchSimulation";
 import { defaultNodes } from "@/lib/nodes";
+import { useCoderStore } from "@/stores/coderStore";
+import { useErrorProcessingStore } from "@/stores/errorProcessingStore";
+import { useNetworkLineStore } from "@/stores/networkLineStore";
 import { SmoothFastXStep } from "@customComponents/Edges/SmoothFastXStep";
 import {
   CoderNode,
@@ -10,6 +14,7 @@ import {
   FinishNode,
   NetworkLineNode,
 } from "@customComponents/Nodes";
+import { Button } from "@shadcnComponents/button";
 import {
   applyEdgeChanges,
   applyNodeChanges,
@@ -22,6 +27,7 @@ import {
   Node,
   NodeChange,
   NodeTypes,
+  Panel,
   ReactFlow,
 } from "@xyflow/react";
 import { FC, useCallback, useState } from "react";
@@ -36,19 +42,22 @@ const nodeTypes: NodeTypes = {
 };
 
 const edgeTypes: EdgeTypes = {
-  SmoothFastXStep: SmoothFastXStep
-}
+  SmoothFastXStep: SmoothFastXStep,
+};
 
 const defaultedgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
   deletable: false,
   selectable: false,
-}
+};
 
 export const MainPage: FC = () => {
   const { theme } = useTheme();
   const [nodes, setNodes] = useState(defaultNodes);
   const [edges, setEdges] = useState(defaultEdges);
+  const coderState = useCoderStore();
+  const networkState = useNetworkLineStore();
+  const errorProcessingState = useErrorProcessingStore();
 
   const onNodesChange = useCallback(
     (changes: NodeChange<Node>[]) =>
@@ -60,6 +69,29 @@ export const MainPage: FC = () => {
       setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
     [],
   );
+
+  const onLaunch = () => {
+    startSimulation({
+      coder: {
+        dataLength: coderState.dataLength,
+        polinomial: coderState.polinomial,
+        polinomialMode: coderState.polinomialMode,
+      },
+      networkLine: {
+        mode: networkState.mode,
+        independedPropability: networkState.independedPropability,
+        propabilityInGoodCondition: networkState.propabilityInGoodCondition,
+        propabilityInBadCondition: networkState.propabilityInBadCondition,
+        propabilityToGoBad: networkState.propabilityToGoBad,
+        propabilityToGoGood: networkState.propabilityToGoGood,
+      },
+      errorProcessing: {
+        totalPacketsToStop: errorProcessingState.totalPacketsToStop,
+        totalUndetectedErrorsToStop:
+          errorProcessingState.totalUndetectedErrorsToStop,
+      },
+    })
+  };
 
   return (
     <div className="w-full h-full">
@@ -76,6 +108,9 @@ export const MainPage: FC = () => {
       >
         <Background />
         <Controls />
+        <Panel position="top-center" className="mt-6">
+          <Button onClick={onLaunch} className="text-lg px-6 py-5">Запустить</Button>
+        </Panel>
       </ReactFlow>
     </div>
   );

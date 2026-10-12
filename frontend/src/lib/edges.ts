@@ -24,6 +24,8 @@ export const defaultEdges: Edge[] = [
     source: "n4",
     sourceHandle: "isError",
     target: "n5",
+    // style: {stroke: "#450a0a"},
+    style: {stroke: "red"},
     targetHandle: "isError",
   },
   {
@@ -35,6 +37,7 @@ export const defaultEdges: Edge[] = [
   {
     id: "n5-n7",
     source: "n5",
+    style: {stroke: "red"},
     sourceHandle: "UndetectedErrorsCount",
     target: "n7",
   },

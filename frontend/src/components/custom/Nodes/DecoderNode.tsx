@@ -7,6 +7,8 @@ type DecoderNodeProps = Node<{}, "DecoderNode">;
 export const DecoderNode: FC<NodeProps<DecoderNodeProps>> = () => {
   return (
     <DefaultNode title="Декодер проверочных символов" className="max-w-40">
+
+      <div className="absolute bottom-4 right-5 font-bold" >Err</div>
       <Handle type="target" position={Position.Left} />
       <Handle
         type="source"

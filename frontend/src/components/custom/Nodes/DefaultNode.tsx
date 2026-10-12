@@ -11,16 +11,18 @@ interface DefaultNodeProps {
   title: string;
   className?: string;
   children: React.ReactNode;
+  centeredTitle?: boolean
 }
 
 export const DefaultNode: FC<DefaultNodeProps> = ({
   title,
   className,
   children,
+  centeredTitle = false,
 }) => {
   return (
     <Card size="sm" className={cn("border-3 border-accent p-4 bg-muted dark:bg-background/70", className)}>
-      <CardTitle className="text-center">{title}</CardTitle>
+      <CardTitle className={cn("text-center", centeredTitle && "absolute top-1/2 left-1/2 -translate-1/2")}>{title}</CardTitle>
       <CardContent>{children}</CardContent>
       <CardFooter />
     </Card>
