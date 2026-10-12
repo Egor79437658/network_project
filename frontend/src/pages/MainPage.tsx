@@ -62,6 +62,7 @@ const defaultedgeOptions: DefaultEdgeOptions = {
 export const MainPage: FC = () => {
   const { theme } = useTheme();
   const [nodes, setNodes] = useState(defaultNodes);
+  const [simulating, setSimulating] = useState(false)
   const [edges, setEdges] = useState(defaultEdges);
   const coderState = useCoderStore();
   const networkState = useNetworkLineStore();
@@ -79,11 +80,15 @@ export const MainPage: FC = () => {
   );
 
   useEffect(() => {
-    const off1 = Events.On("simulation:started", () =>
-      setEdges((eds) => eds.map((e) => ({ ...e, animated: true }))),
+    const off1 = Events.On("simulation:started", () => {
+      setEdges((eds) => eds.map((e) => ({ ...e, animated: true })))
+      setSimulating(true)
+    }
     );
-    const off2 = Events.On("simulation:finished", () =>
-      setEdges((eds) => eds.map((e) => ({ ...e, animated: false }))),
+    const off2 = Events.On("simulation:finished", () => {
+      setEdges((eds) => eds.map((e) => ({ ...e, animated: false })))
+      setSimulating(false)
+    }
     );
     WML.Reload();
     return () => {
@@ -131,7 +136,7 @@ export const MainPage: FC = () => {
         <Background />
         <Controls />
         <Panel position="top-center" className="mt-6">
-          <Button onClick={onLaunch} className="text-lg px-6 py-5">
+          <Button disabled={simulating} onClick={onLaunch} className="text-lg px-6 py-5">
             Запустить
           </Button>
         </Panel>

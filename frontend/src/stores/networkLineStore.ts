@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { NetworkLineMode } from "../../bindings/changeme";
+import { NetworkLineMode } from "@bindings/backend";
 
 export interface NetworlLineState {
   mode: NetworkLineMode;

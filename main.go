@@ -4,8 +4,8 @@ import (
 	"embed"
 
 	"log"
-	"time"
 
+	"github.com/google/uuid"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -21,10 +21,15 @@ func init() {
 	// Register a custom event whose associated data type is string.
 	// This is not required, but the binding generator will pick up registered events
 	// and provide a strongly typed JS/TS API for them.
-	application.RegisterEvent[string]("time")
 	application.RegisterEvent[int]("simulation:progress")
-	application.RegisterEvent[string]("simulation:started")
-	application.RegisterEvent[string]("simulation:finished")
+	application.RegisterEvent[uuid.UUID]("simulation:started")
+	application.RegisterEvent[uuid.UUID]("simulation:finished")
+	application.RegisterEvent[string]("simulation:error")
+
+	application.RegisterEvent[float64]("error-generation:progress")
+	application.RegisterEvent[uuid.UUID]("error-generation:started")
+	application.RegisterEvent[uuid.UUID]("error-generation:finished")
+	application.RegisterEvent[string]("error-generation:error")
 }
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
@@ -38,10 +43,10 @@ func main() {
 	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
 	// 'Mac' options tailor the application when running an macOS.
 	app := application.New(application.Options{
-		Name:        "network_project",
-		Description: "A demo of using raw HTML & CSS",
+		Name:        "Модель передачи данных",
+		Description: "Симулятор линии передачи данных с учетом ошибок по модели независимых ошибок или модели Гильберта",
 		Services: []application.Service{
-			application.NewService(&SimulationService{}),
+			application.NewService(&SimulationService{&ErrorGeneratorService{}}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -70,15 +75,15 @@ func main() {
 		URL: "/",
 	})
 
-	// Create a goroutine that emits an event containing the current time every second.
-	// The frontend can listen to this event and update the UI accordingly.
-	go func() {
-		for {
-			now := time.Now().Format(time.RFC1123)
-			app.Event.Emit("time", now)
-			time.Sleep(time.Second)
-		}
-	}()
+	// // Create a goroutine that emits an event containing the current time every second.
+	// // The frontend can listen to this event and update the UI accordingly.
+	// go func() {
+	// 	for {
+	// 		now := time.Now().Format(time.RFC1123)
+	// 		app.Event.Emit("time", now)
+	// 		time.Sleep(time.Second)
+	// 	}
+	// }()
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()

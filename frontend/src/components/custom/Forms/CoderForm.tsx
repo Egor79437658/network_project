@@ -17,7 +17,7 @@ import { Save } from "lucide-react";
 import { Input } from "@shadcnComponents/input";
 import { useCoderStore } from "@/stores/coderStore";
 import { transformPolinomial } from "@/lib/utils";
-import { PolinomialMode } from "@bindings/changeme";
+import { PolinomialMode } from "@bindings/backend";
 
 export const CoderForm: FC = () => {
   const coderState = useCoderStore();

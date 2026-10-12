@@ -5,13 +5,21 @@
 // @ts-ignore: Unused imports
 import type { Events } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import type * as uuid$0 from "../../../../google/uuid/models.js";
+
 declare module "@wailsio/runtime" {
     namespace Events {
         interface CustomEvents {
-            "simulation:finished": string;
+            "error-generation:error": string;
+            "error-generation:finished": uuid$0.UUID;
+            "error-generation:progress": number;
+            "error-generation:started": uuid$0.UUID;
+            "simulation:error": string;
+            "simulation:finished": uuid$0.UUID;
             "simulation:progress": number;
-            "simulation:started": string;
-            "time": string;
+            "simulation:started": uuid$0.UUID;
         }
     }
 }

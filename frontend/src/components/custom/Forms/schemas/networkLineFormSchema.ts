@@ -1,12 +1,8 @@
-import { NetworkLineMode } from "@bindings/changeme";
+import { NetworkLineMode } from "@bindings/backend";
 import * as z from "zod";
 
 export const networkLineFormSchema = z.object({
-  mode: z.enum([
-    NetworkLineMode.Independed,
-    NetworkLineMode.Guilbert,
-    NetworkLineMode.$zero,
-  ]),
+  mode: z.enum(NetworkLineMode),
   independedPropability: z.coerce
     .number<number>()
     .min(0, "Вероятность должна быть между 0 и 1")

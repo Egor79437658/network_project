@@ -1,4 +1,4 @@
-import { PolinomialMode } from "@bindings/changeme";
+import { PolinomialMode } from "@bindings/backend";
 
 export { cn } from "cn";
 

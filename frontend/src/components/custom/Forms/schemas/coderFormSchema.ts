@@ -1,4 +1,4 @@
-import { PolinomialMode } from "@bindings/changeme";
+import { PolinomialMode } from "@bindings/backend";
 import * as z from "zod";
 
 const binaryRegex = /^[0-1]*$/;
@@ -8,13 +8,9 @@ export const coderFormSchema = z
     dataLength: z.coerce
       .number<number>()
       .min(2, "размер пакета должен быть не менее 2")
-      .max(128, "размер пакета должен быть не более 128"),
+      .max(127, "размер пакета должен быть не более 127"),
     polinomial: z.string(),
-    polinomialMode: z.enum([
-      PolinomialMode.Binary,
-      PolinomialMode.Array,
-      PolinomialMode.$zero,
-    ]),
+    polinomialMode: z.enum(PolinomialMode),
   })
   .refine(
     //check if string is valid

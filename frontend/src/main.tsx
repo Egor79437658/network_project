@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ThemeProvider disableTransitionOnChange={false}>
       <TooltipProvider>
         <App />
-        <Toaster />
+        <Toaster visibleToasts={4}/>
       </TooltipProvider>
     </ThemeProvider>
   </React.StrictMode>,

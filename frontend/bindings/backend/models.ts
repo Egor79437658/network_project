@@ -39,6 +39,9 @@ export enum PolinomialMode {
 
     Array = "array",
     Binary = "binary",
+
+    Good = "good",
+    Bad = "bad",
 };
 
 export interface SimulationServiceStart {

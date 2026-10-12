@@ -1,6 +1,6 @@
 import { transformPolinomial } from "@/lib/utils";
 import { create } from "zustand";
-import { PolinomialMode } from "../../bindings/changeme";
+import { PolinomialMode } from "@bindings/backend";
 
 export interface CoderState {
   dataLength: number;

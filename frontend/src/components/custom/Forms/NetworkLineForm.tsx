@@ -19,7 +19,7 @@ import {
   useNetworkLineStore,
 } from "@/stores/networkLineStore";
 import { networkLineFormSchema } from "./schemas/networkLineFormSchema";
-import { NetworkLineMode } from "@bindings/changeme";
+import { NetworkLineMode } from "@bindings/backend";
 
 interface InputArrayElement {
   key: keyof Omit<NetworlLineState, "mode">;
