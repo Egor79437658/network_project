@@ -17,6 +17,7 @@ import { Save } from "lucide-react";
 import { Input } from "@shadcnComponents/input";
 import { useCoderStore } from "@/stores/coderStore";
 import { transformPolinomial } from "@/lib/utils";
+import { PolinomialMode } from "@bindings/changeme";
 
 export const CoderForm: FC = () => {
   const coderState = useCoderStore();
@@ -59,11 +60,11 @@ export const CoderForm: FC = () => {
                   {...field}
                   id="polinomialMode"
                   onCheckedChange={(checked) => {
-                    field.onChange(checked ? "binary" : "array");
+                    field.onChange(checked ? PolinomialMode.Binary : PolinomialMode.Array);
                     form.setValue(
                       "polinomial",
                       transformPolinomial(
-                        checked ? "binary" : "array",
+                        checked ? PolinomialMode.Binary : PolinomialMode.Array,
                         polinomial,
                       ),
                     );

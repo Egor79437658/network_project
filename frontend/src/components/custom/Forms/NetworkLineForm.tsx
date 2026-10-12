@@ -19,6 +19,7 @@ import {
   useNetworkLineStore,
 } from "@/stores/networkLineStore";
 import { networkLineFormSchema } from "./schemas/networkLineFormSchema";
+import { NetworkLineMode } from "@bindings/changeme";
 
 interface InputArrayElement {
   key: keyof Omit<NetworlLineState, "mode">;
@@ -53,7 +54,7 @@ export const NetworkLineForm: FC = () => {
   }
 
   const inputArrays: InputArrayElement[] =
-    lineMode === "independed"
+    lineMode === NetworkLineMode.Independed
       ? [{ key: "independedPropability", label: "Вероятность ошибки:" }]
       : [
           {
@@ -94,7 +95,11 @@ export const NetworkLineForm: FC = () => {
                   {...field}
                   id="mode"
                   onCheckedChange={(checked) => {
-                    field.onChange(checked ? "guilbert" : "independed");
+                    field.onChange(
+                      checked
+                        ? NetworkLineMode.Guilbert
+                        : NetworkLineMode.Independed,
+                    );
                   }}
                   size="sm"
                   aria-invalid={fieldState.invalid}

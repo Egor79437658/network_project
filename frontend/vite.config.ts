@@ -23,6 +23,10 @@ export default defineConfig({
         import.meta.dirname,
         "./src/components/ui",
       ),
+      "@bindings": path.resolve(
+        import.meta.dirname,
+        "./bindings",
+      ),
     },
   },
 });

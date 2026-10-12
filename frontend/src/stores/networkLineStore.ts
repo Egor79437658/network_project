@@ -1,7 +1,8 @@
 import { create } from "zustand";
+import { NetworkLineMode } from "../../bindings/changeme";
 
 export interface NetworlLineState {
-  mode: "independed" | "guilbert";
+  mode: NetworkLineMode;
   independedPropability: number;
 
   propabilityInGoodCondition: number;
@@ -12,7 +13,7 @@ export interface NetworlLineState {
 }
 
 interface NetworkLineStore extends NetworlLineState {
-  setMode: (mode: "independed" | "guilbert") => void;
+  setMode: (mode: NetworkLineMode) => void;
   setIndependedPropability: (propability: number) => void;
   setPropabilityInGoodCondition: (propability: number) => void;
   setPropabilityInBadCondition: (propability: number) => void;
@@ -22,7 +23,7 @@ interface NetworkLineStore extends NetworlLineState {
 }
 
 export const useNetworkLineStore = create<NetworkLineStore>()((set) => ({
-  mode: "independed",
+  mode: NetworkLineMode.Independed,
   independedPropability: 0.01,
 
   propabilityInGoodCondition: 0,

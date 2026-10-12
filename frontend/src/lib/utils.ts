@@ -1,11 +1,13 @@
+import { PolinomialMode } from "@bindings/changeme";
+
 export { cn } from "cn";
 
 export const transformPolinomial = (
-  to: "array" | "binary",
+  to: PolinomialMode,
   polinomial: string,
 ): string => {
   let newValue: string;
-  if (to === "binary") {
+  if (to === PolinomialMode.Binary) {
     const arr: number[] = JSON.parse(polinomial || "[]");
     newValue = arr
       .sort((a, b) => b - a)

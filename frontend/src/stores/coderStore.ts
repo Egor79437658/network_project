@@ -1,16 +1,17 @@
 import { transformPolinomial } from "@/lib/utils";
 import { create } from "zustand";
+import { PolinomialMode } from "../../bindings/changeme";
 
 export interface CoderState {
   dataLength: number;
   polinomial: string;
-  polinomialMode: "array" | "binary";
+  polinomialMode: PolinomialMode;
 }
 
 interface CoderStore extends CoderState {
   setPolinomial: (polinomial: string) => void;
   setDataLength: (dataLenth: number) => void;
-  setPolinomialMode: (mode: "array" | "binary") => void;
+  setPolinomialMode: (mode: PolinomialMode) => void;
 }
 
 // const arrayRegex = /^\[(\d+,\s+)*(\d+)\]$/
@@ -19,10 +20,10 @@ const binaryRegex = /^[0-1]*$/;
 export const useCoderStore = create<CoderStore>()((set) => ({
   dataLength: 15,
   polinomial: "[5, 3, 0]",
-  polinomialMode: "array",
+  polinomialMode: PolinomialMode.Array,
   setPolinomial: (polinomial: CoderState["polinomial"]) =>
     set(({ polinomialMode, dataLength }) => {
-      if (polinomialMode === "array") {
+      if (polinomialMode === PolinomialMode.Array) {
         let arr: any;
         try {
           arr = JSON.parse(polinomial || "[]");
@@ -67,7 +68,7 @@ export const useCoderStore = create<CoderStore>()((set) => ({
       return { dataLength };
     }),
 
-  setPolinomialMode: (polinomialMode: CoderState["polinomialMode"]) =>
+  setPolinomialMode: (polinomialMode: PolinomialMode) =>
     set(({ polinomial, polinomialMode: oldMode }) => {
       let newValue: string;
       if (oldMode !== polinomialMode) {

@@ -15,6 +15,7 @@ import {
   NetworkLineNode,
 } from "@customComponents/Nodes";
 import { Button } from "@shadcnComponents/button";
+import { Events, WML } from "@wailsio/runtime";
 import {
   applyEdgeChanges,
   applyNodeChanges,
@@ -24,13 +25,14 @@ import {
   Edge,
   EdgeChange,
   EdgeTypes,
+  MarkerType,
   Node,
   NodeChange,
   NodeTypes,
   Panel,
   ReactFlow,
 } from "@xyflow/react";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 const nodeTypes: NodeTypes = {
   DataSourceNode: DataSourceNode,
@@ -49,6 +51,12 @@ const defaultedgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
   deletable: false,
   selectable: false,
+  style: { stroke: "white" },
+  markerEnd: {
+    type: MarkerType.ArrowClosed,
+    width: 25,
+    height: 25,
+  },
 };
 
 export const MainPage: FC = () => {
@@ -70,6 +78,20 @@ export const MainPage: FC = () => {
     [],
   );
 
+  useEffect(() => {
+    const off1 = Events.On("simulation:started", () =>
+      setEdges((eds) => eds.map((e) => ({ ...e, animated: true }))),
+    );
+    const off2 = Events.On("simulation:finished", () =>
+      setEdges((eds) => eds.map((e) => ({ ...e, animated: false }))),
+    );
+    WML.Reload();
+    return () => {
+      off1();
+      off2();
+    };
+  }, []);
+
   const onLaunch = () => {
     startSimulation({
       coder: {
@@ -90,7 +112,7 @@ export const MainPage: FC = () => {
         totalUndetectedErrorsToStop:
           errorProcessingState.totalUndetectedErrorsToStop,
       },
-    })
+    });
   };
 
   return (
@@ -109,7 +131,9 @@ export const MainPage: FC = () => {
         <Background />
         <Controls />
         <Panel position="top-center" className="mt-6">
-          <Button onClick={onLaunch} className="text-lg px-6 py-5">Запустить</Button>
+          <Button onClick={onLaunch} className="text-lg px-6 py-5">
+            Запустить
+          </Button>
         </Panel>
       </ReactFlow>
     </div>

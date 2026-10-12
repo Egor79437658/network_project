@@ -9,8 +9,8 @@ type CoderNodeProps = Node<{}, "CoderNode">;
 export const CoderNode: FC<NodeProps<CoderNodeProps>> = () => {
   return (
     <DefaultNode
-      title="Генератор проверочных символов"
-      className="min-h-42 max-w-40"
+      title="Кодер"
+      className="min-h-30 min-w-40"
     >
       <NodePopover>
         <CoderForm />

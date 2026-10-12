@@ -1,20 +1,25 @@
+import { PolinomialMode } from "@bindings/changeme";
 import * as z from "zod";
 
 const binaryRegex = /^[0-1]*$/;
 
 export const coderFormSchema = z
   .object({
-    dataLength: z
-      .coerce.number<number>()
+    dataLength: z.coerce
+      .number<number>()
       .min(2, "размер пакета должен быть не менее 2")
       .max(128, "размер пакета должен быть не более 128"),
     polinomial: z.string(),
-    polinomialMode: z.literal(["array", "binary"]),
+    polinomialMode: z.enum([
+      PolinomialMode.Binary,
+      PolinomialMode.Array,
+      PolinomialMode.$zero,
+    ]),
   })
   .refine(
     //check if string is valid
     ({ polinomial, polinomialMode }) => {
-      if (polinomialMode === "array") {
+      if (polinomialMode === PolinomialMode.Array) {
         let arr: any;
         try {
           arr = JSON.parse(polinomial || "[]");
@@ -42,7 +47,7 @@ export const coderFormSchema = z
   .refine(
     //check if string is valid
     ({ polinomial, polinomialMode }) => {
-      if (polinomialMode === "binary") {
+      if (polinomialMode === PolinomialMode.Binary) {
         if (!binaryRegex.test(polinomial)) {
           return false;
         }
@@ -58,7 +63,7 @@ export const coderFormSchema = z
   .refine(
     // check length
     ({ polinomial, polinomialMode, dataLength }) => {
-      if (polinomialMode === "array") {
+      if (polinomialMode === PolinomialMode.Array) {
         const arr: number[] = JSON.parse(polinomial || "[]");
         if (Math.max(...arr) >= dataLength) {
           return false;

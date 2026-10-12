@@ -8,7 +8,7 @@ export const defaultEdges: Edge[] = [
     sourceHandle: "toErrorProcessing",
     target: "n5",
     targetHandle: "originalData",
-    type: "SmoothFastXStep"
+    type: "SmoothFastXStep",
   },
   { id: "n2-n3", source: "n2", target: "n3" },
   { id: "n3-n4", source: "n3", target: "n4" },
@@ -25,7 +25,13 @@ export const defaultEdges: Edge[] = [
     sourceHandle: "isError",
     target: "n5",
     // style: {stroke: "#450a0a"},
-    style: {stroke: "red"},
+    // style: { stroke: "red" },
+    // markerEnd: {
+    //   type: MarkerType.ArrowClosed,
+    //   color: "red",
+    //   height: 30,
+    //   width: 30,
+    // },
     targetHandle: "isError",
   },
   {
@@ -37,7 +43,13 @@ export const defaultEdges: Edge[] = [
   {
     id: "n5-n7",
     source: "n5",
-    style: {stroke: "red"},
+    // style: { stroke: "red" },
+    // markerEnd: {
+    //   type: MarkerType.ArrowClosed,
+    //   color: "red",
+    //   height: 30,
+    //   width: 30,
+    // },
     sourceHandle: "UndetectedErrorsCount",
     target: "n7",
   },

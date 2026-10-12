@@ -23,6 +23,7 @@
     "paths": {
       "@customComponents/*": ["./src/components/custom/*"],
       "@shadcnComponents/*": ["./src/components/ui/*"],
+      "@bindings/*": ["./bindings/*"],
       "@/*": ["./src/*"],
     },
   },

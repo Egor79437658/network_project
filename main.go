@@ -22,6 +22,9 @@ func init() {
 	// This is not required, but the binding generator will pick up registered events
 	// and provide a strongly typed JS/TS API for them.
 	application.RegisterEvent[string]("time")
+	application.RegisterEvent[int]("simulation:progress")
+	application.RegisterEvent[string]("simulation:started")
+	application.RegisterEvent[string]("simulation:finished")
 }
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
@@ -38,7 +41,7 @@ func main() {
 		Name:        "network_project",
 		Description: "A demo of using raw HTML & CSS",
 		Services: []application.Service{
-			application.NewService(&GreetService{}),
+			application.NewService(&SimulationService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

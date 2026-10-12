@@ -9,7 +9,7 @@ type NetworkLineNodeProps = Node<{}, "NetworkLineNode">;
 
 export const NetworkLineNode: FC<NodeProps<NetworkLineNodeProps>> = () => {
   return (
-    <DefaultNode title="Линия передачи" className="min-h-30 min-w-120">
+    <DefaultNode title="Канал передачи данных" className="min-h-30 min-w-120">
       <NodePopover className="min-w-95">
         <NetworkLineForm />
       </NodePopover>

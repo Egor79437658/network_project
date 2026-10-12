@@ -14,5 +14,5 @@ export const SmoothFastXStep: FC<EdgeProps<CustomEdge>> = (props) => {
   const [edgePath] = getSmoothStepPath({ ...props, centerX: stepX });
   console.log()
 
-  return <BaseEdge id={props.id} path={edgePath} />;
+  return <BaseEdge {...props} id={props.id} path={edgePath} />;
 };
