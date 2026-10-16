@@ -8,8 +8,8 @@ const networlLineX = coderX + 160 + gap;
 const decoderX = networlLineX + 480 + gap;
 const errorProcessingX = decoderX + 160 + gap;
 const finishX = errorProcessingX + 520 + gap;
-const finishY = middleY - 59;
-const finishGap = 150;
+const finishY = middleY - 67;
+const finishGap = 200;
 
 export const defaultNodes: Node[] = [
   {

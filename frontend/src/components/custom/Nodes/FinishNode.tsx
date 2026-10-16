@@ -9,7 +9,7 @@ interface FinishNodeProps {
 
 export const FinishNode: FC<FinishNodeProps> = ({ title, children }) => {
   return (
-    <DefaultNode title={title}>
+    <DefaultNode title={title} className="min-w-80">
       {children}
       <Handle type="target" position={Position.Left} />
     </DefaultNode>

@@ -2,14 +2,18 @@ import { useErrorProcessingStore } from "@/stores/errorProcessingStore";
 import { FC } from "react";
 import { FinishNode } from "./FinishNode";
 import { Node, NodeProps } from "@xyflow/react";
+import NumberFlow from '@number-flow/react'
 
 type TotalTransmittedNodeProps = Node<{}, "TotalTransmittedNode">;
 
-export const TotalTransmittedNode: FC<NodeProps<TotalTransmittedNodeProps>> = () => {
+export const TotalTransmittedNode: FC<
+  NodeProps<TotalTransmittedNodeProps>
+> = () => {
   const { totalTransmitted } = useErrorProcessingStore();
+  console.log(totalTransmitted)
   return (
     <FinishNode title="Количество переданных пакетов">
-      {totalTransmitted}
+      <NumberFlow value={totalTransmitted} className="text-lg p-0 text-center" />
     </FinishNode>
   );
 };

@@ -55,7 +55,7 @@ const defaultedgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
   deletable: false,
   selectable: false,
-  // style: { stroke: "white" },
+  style: { stroke: "white" },
   markerEnd: {
     type: MarkerType.ArrowClosed,
     width: 25,
