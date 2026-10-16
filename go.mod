@@ -4,6 +4,8 @@ go 1.25.0
 
 require (
 	github.com/google/uuid v1.6.0
+	github.com/mattn/go-sqlite3 v1.14.52
+	github.com/pasztorpisti/go-crc v1.1.0
 	github.com/wailsapp/wails/v3 v3.0.0-beta.28
 )
 

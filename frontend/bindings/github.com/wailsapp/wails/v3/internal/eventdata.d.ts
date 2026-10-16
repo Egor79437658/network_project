@@ -7,17 +7,32 @@ import type { Events } from "@wailsio/runtime";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
+import type * as services$0 from "../../../../../backend/services/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
 import type * as uuid$0 from "../../../../google/uuid/models.js";
 
 declare module "@wailsio/runtime" {
     namespace Events {
         interface CustomEvents {
+            "coder:error": string;
+            "coder:finished": uuid$0.UUID;
+            "coder:progress": number;
+            "coder:started": uuid$0.UUID;
+            "data-generation:error": string;
+            "data-generation:finished": uuid$0.UUID;
+            "data-generation:progress": number;
+            "data-generation:started": uuid$0.UUID;
+            "decoder:error": string;
+            "decoder:finished": uuid$0.UUID;
+            "decoder:progress": number;
+            "decoder:started": uuid$0.UUID;
             "error-generation:error": string;
             "error-generation:finished": uuid$0.UUID;
             "error-generation:progress": number;
             "error-generation:started": uuid$0.UUID;
             "simulation:error": string;
-            "simulation:finished": uuid$0.UUID;
+            "simulation:finished": services$0.DecoderStatistics;
             "simulation:progress": number;
             "simulation:started": uuid$0.UUID;
         }

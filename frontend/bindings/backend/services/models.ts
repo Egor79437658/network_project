@@ -3,13 +3,29 @@
 
 export interface CoderStartState {
     "dataLength": number;
-    "polinomial": string | null;
-    "polinomialMode": PolinomialMode;
+
+    /**
+     * ! должен быть в формате msb
+     */
+    "polynomial": number;
+    "polynomialDegree": number;
+    "messageLength": number;
+}
+
+export interface DecoderStatistics {
+    "detectedErrors": number;
+    "undetectedErrors": number;
+    "totalTransmited": number;
 }
 
 export interface ErrorProcessingControlsStartSate {
     "totalPacketsToStop": number;
     "totalUndetectedErrorsToStop": number;
+}
+
+export interface GetSimulationResultsParams {
+    "offset": number;
+    "limit": number;
 }
 
 export enum NetworkLineMode {
@@ -19,7 +35,7 @@ export enum NetworkLineMode {
     $zero = "",
 
     Independed = "independed",
-    Guilbert = "guilbert",
+    Gilbert = "gilbert",
 };
 
 export interface NetworkLineStartState {
@@ -31,18 +47,16 @@ export interface NetworkLineStartState {
     "propabilityToGoGood": number;
 }
 
-export enum PolinomialMode {
-    /**
-     * The Go zero value for the underlying type of the enum.
-     */
-    $zero = "",
-
-    Array = "array",
-    Binary = "binary",
-
-    Good = "good",
-    Bad = "bad",
-};
+export interface SimulationResult {
+    "detectedErrors": number;
+    "undetectedErrors": number;
+    "totalTransmited": number;
+    "dataLength": number;
+    "messageLength": number;
+    "polynomial": number;
+    "networkParams": NetworkLineStartState;
+    "Id": number;
+}
 
 export interface SimulationServiceStart {
     "coder": CoderStartState;

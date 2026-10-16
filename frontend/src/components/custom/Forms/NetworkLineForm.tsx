@@ -19,7 +19,7 @@ import {
   useNetworkLineStore,
 } from "@/stores/networkLineStore";
 import { networkLineFormSchema } from "./schemas/networkLineFormSchema";
-import { NetworkLineMode } from "@bindings/backend";
+import { NetworkLineMode } from "@bindings/backend/services";
 
 interface InputArrayElement {
   key: keyof Omit<NetworlLineState, "mode">;
@@ -97,14 +97,14 @@ export const NetworkLineForm: FC = () => {
                   onCheckedChange={(checked) => {
                     field.onChange(
                       checked
-                        ? NetworkLineMode.Guilbert
+                        ? NetworkLineMode.Gilbert
                         : NetworkLineMode.Independed,
                     );
                   }}
                   size="sm"
                   aria-invalid={fieldState.invalid}
                 />
-                <FieldLabel htmlFor="polinomialMode">
+                <FieldLabel htmlFor="polynomialMode">
                   Модель гильберта
                 </FieldLabel>
               </div>

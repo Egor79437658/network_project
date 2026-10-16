@@ -8,8 +8,13 @@ import { Layout } from "@customComponents/Layout";
 import { ErrorPage } from "./pages/ErrorPage";
 import { useEffect } from "react";
 import { Events } from "@wailsio/runtime";
-import { handleErrorGenerationProgress, handleSimulationProgress } from "./lib/events/";
-// import { useEffect } from "react";
+import {
+  handleCoderProgress,
+  handleDataGenerationProgress,
+  handleDecderProgress,
+  handleErrorGenerationProgress,
+  handleSimulationProgress,
+} from "./lib/events";
 
 function App() {
   const routes = [
@@ -38,9 +43,21 @@ function App() {
     const errorGenerationOff = Events.On("error-generation:started", (e) => {
       handleErrorGenerationProgress();
     });
+    const dataGenerationOff = Events.On("data-generation:started", (e) => {
+      handleDataGenerationProgress();
+    });
+    const CoderOff = Events.On("coder:started", (e) => {
+      handleCoderProgress();
+    });
+    const DecoderOff = Events.On("decoder:started", (e) => {
+      handleDecderProgress();
+    });
     return () => {
       simulationOff();
       errorGenerationOff();
+      dataGenerationOff();
+      CoderOff();
+      DecoderOff();
     };
   }, []);
 

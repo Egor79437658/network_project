@@ -1,8 +1,8 @@
 package main
 
 import (
+	"backend/services"
 	"embed"
-
 	"log"
 
 	"github.com/google/uuid"
@@ -21,21 +21,44 @@ func init() {
 	// Register a custom event whose associated data type is string.
 	// This is not required, but the binding generator will pick up registered events
 	// and provide a strongly typed JS/TS API for them.
-	application.RegisterEvent[int]("simulation:progress")
+
+	application.RegisterEvent[float32]("simulation:progress")
 	application.RegisterEvent[uuid.UUID]("simulation:started")
-	application.RegisterEvent[uuid.UUID]("simulation:finished")
+	application.RegisterEvent[services.DecoderStatistics]("simulation:finished")
 	application.RegisterEvent[string]("simulation:error")
 
-	application.RegisterEvent[float64]("error-generation:progress")
+	application.RegisterEvent[float32]("error-generation:progress")
 	application.RegisterEvent[uuid.UUID]("error-generation:started")
 	application.RegisterEvent[uuid.UUID]("error-generation:finished")
 	application.RegisterEvent[string]("error-generation:error")
+
+	application.RegisterEvent[float32]("data-generation:progress")
+	application.RegisterEvent[uuid.UUID]("data-generation:started")
+	application.RegisterEvent[uuid.UUID]("data-generation:finished")
+	application.RegisterEvent[string]("data-generation:error")
+
+	application.RegisterEvent[float32]("coder:progress")
+	application.RegisterEvent[uuid.UUID]("coder:started")
+	application.RegisterEvent[uuid.UUID]("coder:finished")
+	application.RegisterEvent[string]("coder:error")
+
+	application.RegisterEvent[float32]("decoder:progress")
+	application.RegisterEvent[uuid.UUID]("decoder:started")
+	application.RegisterEvent[uuid.UUID]("decoder:finished")
+	application.RegisterEvent[string]("decoder:error")
 }
 
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
 func main() {
+
+	errorGenerator := services.NewErrorGeneratorService()
+	messageGenerator := services.NewDataGenerationService()
+	coderService := services.NewCoderService()
+	decoderService := services.NewDecoderService()
+	databaseService := services.NewDatabaseService()
+	simulationSevice := services.NewSimulationService(errorGenerator, messageGenerator, coderService, decoderService, databaseService)
 
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
@@ -46,7 +69,12 @@ func main() {
 		Name:        "Модель передачи данных",
 		Description: "Симулятор линии передачи данных с учетом ошибок по модели независимых ошибок или модели Гильберта",
 		Services: []application.Service{
-			application.NewService(&SimulationService{&ErrorGeneratorService{}}),
+			application.NewService(errorGenerator),
+			application.NewService(messageGenerator),
+			application.NewService(coderService),
+			application.NewService(decoderService),
+			application.NewService(databaseService),
+			application.NewService(simulationSevice),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

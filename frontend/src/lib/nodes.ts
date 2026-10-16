@@ -44,20 +44,20 @@ export const defaultNodes: Node[] = [
   },
   {
     id: "n6",
-    data: { title: "Количество обнаруженных ошибок", children: 0 },
+    data: {},
     position: { x: finishX, y: finishY - finishGap },
-    type: "FinishNode",
+    type: "DetectedErrorsNode",
   },
   {
     id: "n7",
-    data: { title: "Количество пропущенных ошибок", children: 0 },
+    data: {},
     position: { x: finishX, y: finishY },
-    type: "FinishNode",
+    type: "UnetectedErrorsNode",
   },
   {
     id: "n8",
-    data: { title: "Количество переданных пакетов", children: 0 },
+    data: {},
     position: { x: finishX, y: finishY + finishGap },
-    type: "FinishNode",
+    type: "TotalTransmittedNode",
   },
 ];

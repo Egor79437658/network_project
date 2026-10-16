@@ -15,9 +15,8 @@ import { Switch } from "@shadcnComponents/switch";
 import { Button } from "@shadcnComponents/button";
 import { Save } from "lucide-react";
 import { Input } from "@shadcnComponents/input";
-import { useCoderStore } from "@/stores/coderStore";
-import { transformPolinomial } from "@/lib/utils";
-import { PolinomialMode } from "@bindings/backend";
+import { PolynomialModeEnum, useCoderStore } from "@/stores/coderStore";
+import { transformPolynomial } from "@/lib/utils";
 
 export const CoderForm: FC = () => {
   const coderState = useCoderStore();
@@ -26,17 +25,17 @@ export const CoderForm: FC = () => {
     resolver: zodResolver(coderFormSchema),
     defaultValues: {
       dataLength: coderState.dataLength,
-      polinomial: coderState.polinomial,
-      polinomialMode: coderState.polinomialMode,
+      polynomial: coderState.polynomial,
+      polynomialMode: coderState.polynomialMode,
     },
   });
 
-  const polinomial = form.watch("polinomial");
+  const polynomial = form.watch("polynomial");
 
   function onSubmit(data: z.infer<typeof coderFormSchema>) {
     coderState.setDataLength(data.dataLength)
-    coderState.setPolinomialMode(data.polinomialMode)
-    coderState.setPolinomial(data.polinomial)
+    coderState.setPolynomialMode(data.polynomialMode)
+    coderState.setPolynomial(data.polynomial)
     toast.success("Данные сохранены!")
   }
 
@@ -47,48 +46,48 @@ export const CoderForm: FC = () => {
     >
       <FieldGroup>
         <Controller
-          name="polinomialMode"
+          name="polynomialMode"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="polinomialMode">
+              <FieldLabel htmlFor="polynomialMode">
                 Режим задания полинома:
               </FieldLabel>
               <div className="flex gap-4">
-                <FieldLabel htmlFor="polinomialMode">массив</FieldLabel>
+                <FieldLabel htmlFor="polynomialMode">массив</FieldLabel>
                 <Switch
                   {...field}
-                  id="polinomialMode"
+                  id="polynomialMode"
                   onCheckedChange={(checked) => {
-                    field.onChange(checked ? PolinomialMode.Binary : PolinomialMode.Array);
+                    field.onChange(checked ? PolynomialModeEnum.binary : PolynomialModeEnum.array);
                     form.setValue(
-                      "polinomial",
-                      transformPolinomial(
-                        checked ? PolinomialMode.Binary : PolinomialMode.Array,
-                        polinomial,
+                      "polynomial",
+                      transformPolynomial(
+                        checked ? PolynomialModeEnum.binary : PolynomialModeEnum.array,
+                        polynomial,
                       ),
                     );
                   }}
                   size="sm"
                   aria-invalid={fieldState.invalid}
                 />
-                <FieldLabel htmlFor="polinomialMode">бинарное число</FieldLabel>
+                <FieldLabel htmlFor="polynomialMode">бинарное число</FieldLabel>
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
         <Controller
-          name="polinomial"
+          name="polynomial"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="polinomial">Полином:</FieldLabel>
+              <FieldLabel htmlFor="polynomial">Полином:</FieldLabel>
               <div className="flex gap-4">
                 <Input
                   {...field}
                   type="text"
-                  id="polinomial"
+                  id="polynomial"
                   aria-invalid={fieldState.invalid}
                 />
               </div>

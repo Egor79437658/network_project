@@ -10,9 +10,11 @@ import {
   CoderNode,
   DataSourceNode,
   DecoderNode,
+  DetectedErrorsNode,
   ErrorProcessingNode,
-  FinishNode,
   NetworkLineNode,
+  TotalTransmittedNode,
+  UnetectedErrorsNode,
 } from "@customComponents/Nodes";
 import { Button } from "@shadcnComponents/button";
 import { Events, WML } from "@wailsio/runtime";
@@ -40,7 +42,9 @@ const nodeTypes: NodeTypes = {
   NetworkLineNode: NetworkLineNode,
   DecoderNode: DecoderNode,
   ErrorProcessingNode: ErrorProcessingNode,
-  FinishNode: FinishNode,
+  TotalTransmittedNode: TotalTransmittedNode,
+  DetectedErrorsNode: DetectedErrorsNode,
+  UnetectedErrorsNode: UnetectedErrorsNode,
 };
 
 const edgeTypes: EdgeTypes = {
@@ -51,7 +55,7 @@ const defaultedgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
   deletable: false,
   selectable: false,
-  style: { stroke: "white" },
+  // style: { stroke: "white" },
   markerEnd: {
     type: MarkerType.ArrowClosed,
     width: 25,
@@ -81,12 +85,22 @@ export const MainPage: FC = () => {
 
   useEffect(() => {
     const off1 = Events.On("simulation:started", () => {
-      setEdges((eds) => eds.map((e) => ({ ...e, animated: true })))
+      setEdges((eds) => eds.map((e) => ({ ...e, animated: true, style: {stroke: "while"} })))
       setSimulating(true)
+      errorProcessingState.setTotalTransmitted(0)
+      errorProcessingState.setDetectedErrors(0)
+      errorProcessingState.setUndetectedErrors(0)
     }
     );
-    const off2 = Events.On("simulation:finished", () => {
-      setEdges((eds) => eds.map((e) => ({ ...e, animated: false })))
+    const off2 = Events.On("simulation:finished", ({data}) => {
+      setEdges((eds) => eds.map((e) => ({ ...e, animated: false, style: { stroke: "white" } })))
+      setSimulating(false)
+      errorProcessingState.setTotalTransmitted(data.totalTransmited)
+      errorProcessingState.setDetectedErrors(data.detectedErrors)
+      errorProcessingState.setUndetectedErrors(data.undetectedErrors)
+    });
+    const off3 = Events.On("simulation:error", () => {
+      setEdges((eds) => eds.map((e) => ({ ...e, animated: false, style: {stroke: "red" } })))
       setSimulating(false)
     }
     );
@@ -94,6 +108,7 @@ export const MainPage: FC = () => {
     return () => {
       off1();
       off2();
+      off3();
     };
   }, []);
 
@@ -101,8 +116,8 @@ export const MainPage: FC = () => {
     startSimulation({
       coder: {
         dataLength: coderState.dataLength,
-        polinomial: coderState.polinomial,
-        polinomialMode: coderState.polinomialMode,
+        polynomial: coderState.polynomial,
+        polynomialMode: coderState.polynomialMode,
       },
       networkLine: {
         mode: networkState.mode,

@@ -1,4 +1,4 @@
-import { PolinomialMode } from "@bindings/backend";
+import { PolynomialModeEnum } from "@/stores/coderStore";
 import * as z from "zod";
 
 const binaryRegex = /^[0-1]*$/;
@@ -8,17 +8,17 @@ export const coderFormSchema = z
     dataLength: z.coerce
       .number<number>()
       .min(2, "размер пакета должен быть не менее 2")
-      .max(127, "размер пакета должен быть не более 127"),
-    polinomial: z.string(),
-    polinomialMode: z.enum(PolinomialMode),
+      .max(64, "размер пакета должен быть не более 64"),
+    polynomial: z.string(),
+    polynomialMode: z.enum(PolynomialModeEnum),
   })
   .refine(
     //check if string is valid
-    ({ polinomial, polinomialMode }) => {
-      if (polinomialMode === PolinomialMode.Array) {
+    ({ polynomial, polynomialMode }) => {
+      if (polynomialMode === PolynomialModeEnum.array) {
         let arr: any;
         try {
-          arr = JSON.parse(polinomial || "[]");
+          arr = JSON.parse(polynomial || "[]");
         } catch (err) {
           return false;
         }
@@ -36,15 +36,15 @@ export const coderFormSchema = z
     {
       error:
         "Передаваемое значение должно быть строкой в виде массива ('[5,3,0]')",
-      path: ["polinomial"],
+      path: ["polynomial"],
       abort: true,
     },
   )
   .refine(
     //check if string is valid
-    ({ polinomial, polinomialMode }) => {
-      if (polinomialMode === PolinomialMode.Binary) {
-        if (!binaryRegex.test(polinomial)) {
+    ({ polynomial, polynomialMode }) => {
+      if (polynomialMode === PolynomialModeEnum.binary) {
+        if (!binaryRegex.test(polynomial)) {
           return false;
         }
       }
@@ -52,20 +52,20 @@ export const coderFormSchema = z
     },
     {
       error: "Полином должен представлять собой бинарное число",
-      path: ["polinomial"],
+      path: ["polynomial"],
       abort: true,
     },
   )
   .refine(
     // check length
-    ({ polinomial, polinomialMode, dataLength }) => {
-      if (polinomialMode === PolinomialMode.Array) {
-        const arr: number[] = JSON.parse(polinomial || "[]");
+    ({ polynomial, polynomialMode, dataLength }) => {
+      if (polynomialMode === PolynomialModeEnum.array) {
+        const arr: number[] = JSON.parse(polynomial || "[]");
         if (Math.max(...arr) >= dataLength) {
           return false;
         }
       } else {
-        if (polinomial.length >= dataLength) {
+        if (polynomial.length >= dataLength) {
           return false;
         }
       }
@@ -73,7 +73,7 @@ export const coderFormSchema = z
     },
     {
       error: "полином должен иметь степень меньше длинны пакета",
-      path: ["polinomial"],
+      path: ["polynomial"],
       abort: true,
     },
   );

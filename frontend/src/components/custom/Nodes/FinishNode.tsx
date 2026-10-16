@@ -1,17 +1,13 @@
-import { Handle, Node, NodeProps, Position } from "@xyflow/react";
+import { Handle, Position } from "@xyflow/react";
 import React, { FC } from "react";
 import { DefaultNode } from "./DefaultNode";
 
-type FinishNodeProps = Node<
-  {
-    title: string;
-    children: React.ReactNode;
-  },
-  "FinishNode"
->;
+interface FinishNodeProps {
+  title: string;
+  children: React.ReactNode;
+}
 
-export const FinishNode: FC<NodeProps<FinishNodeProps>> = ({ data }) => {
-  const { title, children } = data;
+export const FinishNode: FC<FinishNodeProps> = ({ title, children }) => {
   return (
     <DefaultNode title={title}>
       {children}

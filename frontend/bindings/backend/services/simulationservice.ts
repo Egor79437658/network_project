@@ -7,12 +7,12 @@ import { Call as $Call, CancellablePromise as $CancellablePromise } from "@wails
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
-import * as uuid$0 from "../github.com/google/uuid/models.js";
+import * as uuid$0 from "../../github.com/google/uuid/models.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
 export function StartSimulation(data: $models.SimulationServiceStart): $CancellablePromise<uuid$0.UUID> {
-    return $Call.ByID(2543340481, data);
+    return $Call.ByID(1543603817, data);
 }

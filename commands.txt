@@ -1,3 +1,4 @@
 animate-none!
 
 wails3 dev
+ wails3 generate bindings -ts -i

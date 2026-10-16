@@ -1,4 +1,4 @@
-import { NetworkLineMode } from "@bindings/backend";
+import { NetworkLineMode } from "@bindings/backend/services";
 import * as z from "zod";
 
 export const networkLineFormSchema = z.object({
