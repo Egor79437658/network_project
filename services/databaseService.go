@@ -14,7 +14,10 @@ import (
 )
 
 type DatabaseService struct {
-	db *sql.DB
+	db              *sql.DB
+	createStatement *sql.Stmt
+	readStatement   *sql.Stmt
+	dbFilePath      string
 }
 
 func NewDatabaseService() *DatabaseService {
@@ -22,7 +25,7 @@ func NewDatabaseService() *DatabaseService {
 }
 
 type simulationResultCreate struct {
-	*DecoderStatistics
+	DecoderStatistics
 	DataLength    uint8                 `json:"dataLength"`
 	MessageLength uint8                 `json:"messageLength"`
 	Polynomial    uint64                `json:"polynomial"`
@@ -30,8 +33,8 @@ type simulationResultCreate struct {
 }
 
 type SimulationResult struct {
-	*simulationResultCreate
-	Id int
+	simulationResultCreate
+	Id int `json:"id"`
 }
 
 type GetSimulationResultsParams struct {
@@ -50,8 +53,8 @@ func (s *DatabaseService) runMigrations() error {
 		packets_transmited INTEGER NOT NULL,
 		detected_errors INTEGER NOT NULL,
 		undetected_errors INTEGER NOT NULL
-	);
-	`
+		);
+		`
 	_, err := s.db.Exec(sqlStmt)
 	return err
 }
@@ -64,14 +67,17 @@ func (s *DatabaseService) ServiceStartup(ctx context.Context, options applicatio
 		baseDir = ""
 	}
 
-	targetPath := filepath.Join(baseDir, "network_lab")
+	targetDir := filepath.Join(baseDir, "network_lab")
 
-	err = os.MkdirAll(targetPath, os.ModePerm)
+	err = os.MkdirAll(targetDir, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	s.db, err = sql.Open("sqlite3", filepath.Join(targetPath, "app.db"))
+	dbFile := filepath.Join(targetDir, "app.db")
+	s.dbFilePath = dbFile
+
+	s.db, err = sql.Open("sqlite3", dbFile)
 	if err != nil {
 		return err
 	}
@@ -80,13 +86,52 @@ func (s *DatabaseService) ServiceStartup(ctx context.Context, options applicatio
 		return err
 	}
 
+	createStatement, err := s.db.PrepareContext(ctx,
+		`insert into data (
+			data_length,
+			message_length,
+			polynomial,
+			network_params,
+			packets_transmited,
+			detected_errors,
+			undetected_errors
+		)
+		 values ($1, $2, $3, $4, $5, $6, $7);`)
+	if err != nil {
+		return err
+	}
+	s.createStatement = createStatement
+
+	readStatement, err := s.db.PrepareContext(ctx,
+		`select * from data order by id DESC limit $1 offset $2;`)
+	if err != nil {
+		return err
+	}
+	s.readStatement = readStatement
+
 	return nil
 }
 
 // ServiceShutdown is called when the application shuts down
 func (s *DatabaseService) ServiceShutdown() error {
+	var dbCloseErr, cSErr, rSErr error
 	if s.db != nil {
-		return s.db.Close()
+		dbCloseErr = s.db.Close()
+	}
+	if s.createStatement != nil {
+		cSErr = s.createStatement.Close()
+	}
+	if s.readStatement != nil {
+		rSErr = s.readStatement.Close()
+	}
+	if dbCloseErr != nil {
+		return dbCloseErr
+	}
+	if cSErr != nil {
+		return cSErr
+	}
+	if rSErr != nil {
+		return rSErr
 	}
 	return nil
 }
@@ -98,15 +143,7 @@ func (s *DatabaseService) writeSimulationResults(data simulationResultCreate) (i
 		return -1, fmt.Errorf("error converting network params to string: %w", err)
 	}
 
-	result, err := s.db.Exec(`insert into data (
-								data_length,
-								message_length,
-								polynomial,
-								network_params,
-								packets_transmited,
-    							detected_errors,
-    							undetected_errors
-							  ) values ($1, $2, $3, $4, $5, $6, $7)`,
+	result, err := s.createStatement.Exec(
 		data.DataLength,
 		data.MessageLength,
 		data.Polynomial,
@@ -123,7 +160,7 @@ func (s *DatabaseService) writeSimulationResults(data simulationResultCreate) (i
 
 func (s *DatabaseService) GetSimulationResults(params GetSimulationResultsParams) ([]SimulationResult, error) {
 
-	rows, err := s.db.Query("select * from data offset $1 limit $2", params.Offset, params.Limit)
+	rows, err := s.readStatement.Query(params.Limit, params.Offset)
 	if err != nil {
 		panic(err)
 	}
@@ -156,6 +193,11 @@ func (s *DatabaseService) GetSimulationResults(params GetSimulationResultsParams
 	if err = rows.Err(); err != nil {
 		return results, err
 	}
+	// fmt.Printf("params: %+v\nrows: %+v\n", params, rows)
 
 	return results, err
+}
+
+func (s *DatabaseService) GetDbFilePath() string {
+	return s.dbFilePath
 }

@@ -189,7 +189,7 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 		MessageLength:     data.Coder.MessageLength,
 		Polynomial:        data.Coder.Polynomial,
 		NetworkParams:     data.NetworkLine,
-		DecoderStatistics: &simulationStats,
+		DecoderStatistics: simulationStats,
 	}
 
 	if _, err := s.dataBaseService.writeSimulationResults(simaulationResults); err != nil {

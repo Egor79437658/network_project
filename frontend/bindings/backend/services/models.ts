@@ -55,7 +55,7 @@ export interface SimulationResult {
     "messageLength": number;
     "polynomial": number;
     "networkParams": NetworkLineStartState;
-    "Id": number;
+    "id": number;
 }
 
 export interface SimulationServiceStart {

@@ -10,7 +10,6 @@ export const TotalTransmittedNode: FC<
   NodeProps<TotalTransmittedNodeProps>
 > = () => {
   const { totalTransmitted } = useErrorProcessingStore();
-  console.log(totalTransmitted)
   return (
     <FinishNode title="Количество переданных пакетов">
       <NumberFlow value={totalTransmitted} className="text-lg p-0 text-center" />

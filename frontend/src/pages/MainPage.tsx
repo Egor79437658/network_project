@@ -66,7 +66,7 @@ const defaultedgeOptions: DefaultEdgeOptions = {
 export const MainPage: FC = () => {
   const { theme } = useTheme();
   const [nodes, setNodes] = useState(defaultNodes);
-  const [simulating, setSimulating] = useState(false)
+  const [simulating, setSimulating] = useState(false);
   const [edges, setEdges] = useState(defaultEdges);
   const coderState = useCoderStore();
   const networkState = useNetworkLineStore();
@@ -85,25 +85,29 @@ export const MainPage: FC = () => {
 
   useEffect(() => {
     const off1 = Events.On("simulation:started", () => {
-      setEdges((eds) => eds.map((e) => ({ ...e, animated: true, style: {stroke: "while"} })))
-      setSimulating(true)
-      errorProcessingState.setTotalTransmitted(0)
-      errorProcessingState.setDetectedErrors(0)
-      errorProcessingState.setUndetectedErrors(0)
-    }
-    );
-    const off2 = Events.On("simulation:finished", ({data}) => {
-      setEdges((eds) => eds.map((e) => ({ ...e, animated: false, style: { stroke: "white" } })))
-      setSimulating(false)
-      errorProcessingState.setTotalTransmitted(data.totalTransmited)
-      errorProcessingState.setDetectedErrors(data.detectedErrors)
-      errorProcessingState.setUndetectedErrors(data.undetectedErrors)
+      setEdges((eds) =>
+        eds.map((e) => ({ ...e, animated: true, style: { stroke: "while" } })),
+      );
+      setSimulating(true);
+      errorProcessingState.setTotalTransmitted(0);
+      errorProcessingState.setDetectedErrors(0);
+      errorProcessingState.setUndetectedErrors(0);
+    });
+    const off2 = Events.On("simulation:finished", ({ data }) => {
+      setEdges((eds) =>
+        eds.map((e) => ({ ...e, animated: false, style: { stroke: "white" } })),
+      );
+      setSimulating(false);
+      errorProcessingState.setTotalTransmitted(data.totalTransmited);
+      errorProcessingState.setDetectedErrors(data.detectedErrors);
+      errorProcessingState.setUndetectedErrors(data.undetectedErrors);
     });
     const off3 = Events.On("simulation:error", () => {
-      setEdges((eds) => eds.map((e) => ({ ...e, animated: false, style: {stroke: "red" } })))
-      setSimulating(false)
-    }
-    );
+      setEdges((eds) =>
+        eds.map((e) => ({ ...e, animated: false, style: { stroke: "red" } })),
+      );
+      setSimulating(false);
+    });
     WML.Reload();
     return () => {
       off1();
@@ -151,7 +155,11 @@ export const MainPage: FC = () => {
         <Background />
         <Controls />
         <Panel position="top-center" className="mt-6">
-          <Button disabled={simulating} onClick={onLaunch} className="text-lg px-6 py-5">
+          <Button
+            disabled={simulating}
+            onClick={onLaunch}
+            className="text-lg px-6 py-5"
+          >
             Запустить
           </Button>
         </Panel>
