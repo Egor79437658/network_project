@@ -112,16 +112,20 @@ func (s *SimulationService) applyErrors(data []uint64, errors []uint64, dataLeng
 }
 
 func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UUID {
-
-	if data.Coder.MessageLength == 0 || data.Coder.MessageLength > 64 {
-		panic(fmt.Errorf("MessageLength must be 1..64, got %d", data.Coder.MessageLength))
-	}
-	if data.Coder.DataLength == 0 || data.Coder.DataLength > 64 {
-		panic(fmt.Errorf("DataLength must be 1..64, got %d", data.Coder.DataLength))
-	}
-
 	app := application.Get()
 	simulationId := uuid.New()
+
+	if data.Coder.MessageLength == 0 || data.Coder.MessageLength > 64 {
+		app.Logger.Error(fmt.Sprintf("MessageLength must be 1..64, got %d", data.Coder.MessageLength))
+		app.Event.Emit("simulation:error", "Неправильные входные параметры")
+		return simulationId
+	}
+	if data.Coder.DataLength == 0 || data.Coder.DataLength > 64 {
+		app.Logger.Error(fmt.Sprintf("DataLength must be 1..64, got %d", data.Coder.DataLength))
+		app.Event.Emit("simulation:error", "Неправильные входные параметры")
+		return simulationId
+	}
+
 	app.Event.Emit("simulation:started", simulationId)
 
 	// генерация потока ошибок
@@ -131,7 +135,8 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 	if err := s.errorGenerator.generateErrors(errors, data.NetworkLine, simulationId); err != nil {
 		app.Event.Emit("error-generation:error", err.Error())
 		app.Event.Emit("simulation:error", "Ошибка при генерации ошибок")
-		panic(err.Error())
+		app.Logger.Error(fmt.Sprintf("Ошибка при генерации ошибок: %s", err.Error()))
+		return simulationId
 	}
 	s.emitProgress(app, 20.0)
 
@@ -141,7 +146,8 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 	if err := s.messageGenerator.generateMessages(messages, simulationId); err != nil {
 		app.Event.Emit("data-generation:error", err.Error())
 		app.Event.Emit("simulation:error", "Ошибка при генерации сообщений")
-		panic(err.Error())
+		app.Logger.Error(fmt.Sprintf("Ошибка при генерации сообщений: %s", err.Error()))
+		return simulationId
 	}
 	s.emitProgress(app, 40.0)
 
@@ -160,19 +166,22 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 	if err != nil {
 		app.Event.Emit("coder:error", err.Error())
 		app.Event.Emit("simulation:error", "Ошибка при создании алгоритма кодирования")
-		panic(err.Error())
+		app.Logger.Error(fmt.Sprintf("Ошибка при создании алгоритма кодирования: %s", err.Error()))
+		return simulationId
 	}
 	if err := s.coderService.codeMessages(data.Coder.MessageLength, data.Coder.PolynomialDegree, messages, codedMessages, algo, simulationId); err != nil {
 		app.Event.Emit("coder:error", err.Error())
 		app.Event.Emit("simulation:error", "Ошибка при кодировании сообщений")
-		panic(err.Error())
+		app.Logger.Error(fmt.Sprintf("Ошибка при кодировании сообщений: %s", err.Error()))
+		return simulationId
 	}
 	s.emitProgress(app, 60.0)
 
 	// применение ошибок
 	if err := s.applyErrors(codedMessages, errors, data.Coder.DataLength); err != nil {
 		app.Event.Emit("simulation:error", "Ошибка при применении ошибок")
-		panic(err.Error())
+		app.Logger.Error(fmt.Sprintf("Ошибка при применении ошибок: %s", err.Error()))
+		return simulationId
 	}
 	s.emitProgress(app, 80.0)
 
@@ -180,7 +189,8 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 	if err != nil {
 		app.Event.Emit("decoder:error", err.Error())
 		app.Event.Emit("simulation:error", "Ошибка при дeкодировании сообщений")
-		panic(err.Error())
+		app.Logger.Error(fmt.Sprintf("Ошибка при дeкодировании сообщений: %s", err.Error()))
+		return simulationId
 	}
 	s.emitProgress(app, 99.0)
 
@@ -194,7 +204,8 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 
 	if _, err := s.dataBaseService.writeSimulationResults(simaulationResults); err != nil {
 		app.Event.Emit("simulation:error", "Ошибка при сохранении результатов")
-		panic(err.Error())
+		app.Logger.Error(fmt.Sprintf("Ошибка при сохранении результатов: %s", err.Error()))
+		return simulationId
 	}
 
 	app.Event.Emit("simulation:finished", simulationStats)

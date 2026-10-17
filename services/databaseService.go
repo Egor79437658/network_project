@@ -162,7 +162,7 @@ func (s *DatabaseService) GetSimulationResults(params GetSimulationResultsParams
 
 	rows, err := s.readStatement.Query(params.Limit, params.Offset)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to run query: %w", err)
 	}
 	defer rows.Close()
 	results := []SimulationResult{}
