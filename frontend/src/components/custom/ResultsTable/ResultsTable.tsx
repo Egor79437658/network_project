@@ -3,8 +3,7 @@ import { useTable } from "@tanstack/react-table";
 import { features } from "./features";
 import { columns } from "./columns";
 import { useAsyncList } from "@react-stately/data";
-import { SimulationResult, NetworkLineMode } from "@bindings/backend/services";
-import { GetSimulationResults } from "@bindings/backend/services/databaseservice";
+import { SimulationResult, NetworkLineMode, DatabaseService } from "@bindings/backend/services";
 import {
   Table,
   TableBody,
@@ -30,7 +29,7 @@ export const ResultsTable: FC = () => {
     async load({ cursor }) {
       console.log(cursor);
       const offset = cursor ? Number(cursor) : 0;
-      const res = await GetSimulationResults({
+      const res = await DatabaseService.GetSimulationResults({
         offset,
         limit: PAGE_SIZE,
       });

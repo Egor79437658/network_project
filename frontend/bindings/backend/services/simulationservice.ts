@@ -13,6 +13,10 @@ import * as uuid$0 from "../../github.com/google/uuid/models.js";
 // @ts-ignore: Unused imports
 import * as $models from "./models.js";
 
+export function OpenSourceCode(): $CancellablePromise<void> {
+    return $Call.ByID(514719778);
+}
+
 export function StartSimulation(data: $models.SimulationServiceStart): $CancellablePromise<uuid$0.UUID> {
     return $Call.ByID(1543603817, data);
 }

@@ -201,3 +201,14 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 
 	return simulationId
 }
+
+func (s *SimulationService) OpenSourceCode() error {
+	app := application.Get()
+
+	err := app.Browser.OpenURL("https://github.com/Egor79437658/network_project")
+	if err != nil {
+		app.Logger.Error("Failed to open GitHub", "error", err)
+		return err
+	}
+	return nil
+}
