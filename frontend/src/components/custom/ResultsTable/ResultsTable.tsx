@@ -27,7 +27,6 @@ export const ResultsTable: FC = () => {
 
   const list = useAsyncList<SimulationResult>({
     async load({ cursor }) {
-      console.log(cursor);
       const offset = cursor ? Number(cursor) : 0;
       const res = await DatabaseService.GetSimulationResults({
         offset,

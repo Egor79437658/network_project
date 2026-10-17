@@ -14,7 +14,7 @@ export interface startSimulationData {
 }
 
 export const startSimulation = (data: startSimulationData) => {
-  console.log("simulationState: ", data);
+  // console.log("simulationState: ", data);
 
   if (data.coder.polynomialMode !== PolynomialModeEnum.array) {
     data.coder.polynomial = transformPolynomial(

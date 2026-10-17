@@ -111,19 +111,20 @@ func (s *SimulationService) applyErrors(data []uint64, errors []uint64, dataLeng
 	return nil
 }
 
-func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UUID {
+func (s *SimulationService) startSimulationInternal(data SimulationServiceStart, simulationId uuid.UUID) error {
 	app := application.Get()
-	simulationId := uuid.New()
 
 	if data.Coder.MessageLength == 0 || data.Coder.MessageLength > 64 {
-		app.Logger.Error(fmt.Sprintf("MessageLength must be 1..64, got %d", data.Coder.MessageLength))
+		myErr := fmt.Errorf("MessageLength must be 1..64, got %d", data.Coder.MessageLength)
+		app.Logger.Error(myErr.Error())
 		app.Event.Emit("simulation:error", "Неправильные входные параметры")
-		return simulationId
+		return myErr
 	}
 	if data.Coder.DataLength == 0 || data.Coder.DataLength > 64 {
-		app.Logger.Error(fmt.Sprintf("DataLength must be 1..64, got %d", data.Coder.DataLength))
+		myErr := fmt.Errorf("DataLength must be 1..64, got %d", data.Coder.DataLength)
+		app.Logger.Error(myErr.Error())
 		app.Event.Emit("simulation:error", "Неправильные входные параметры")
-		return simulationId
+		return myErr
 	}
 
 	app.Event.Emit("simulation:started", simulationId)
@@ -133,10 +134,11 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 	errors := make([]uint64, data.ErrorProcessing.TotalPacketsToStop)
 
 	if err := s.errorGenerator.generateErrors(errors, data.NetworkLine, simulationId); err != nil {
-		app.Event.Emit("error-generation:error", err.Error())
+		myErr := fmt.Errorf("Ошибка при генерации ошибок: %s", err.Error())
+		app.Event.Emit("error-generation:error", myErr.Error())
 		app.Event.Emit("simulation:error", "Ошибка при генерации ошибок")
-		app.Logger.Error(fmt.Sprintf("Ошибка при генерации ошибок: %s", err.Error()))
-		return simulationId
+		app.Logger.Error(myErr.Error())
+		return myErr
 	}
 	s.emitProgress(app, 20.0)
 
@@ -144,10 +146,11 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 	messages := make([]uint64, data.ErrorProcessing.TotalPacketsToStop)
 
 	if err := s.messageGenerator.generateMessages(messages, simulationId); err != nil {
-		app.Event.Emit("data-generation:error", err.Error())
+		myErr := fmt.Errorf("Ошибка при генерации сообщений: %s", err.Error())
+		app.Event.Emit("data-generation:error", myErr.Error())
 		app.Event.Emit("simulation:error", "Ошибка при генерации сообщений")
-		app.Logger.Error(fmt.Sprintf("Ошибка при генерации сообщений: %s", err.Error()))
-		return simulationId
+		app.Logger.Error(fmt.Sprintf(myErr.Error()))
+		return myErr
 	}
 	s.emitProgress(app, 40.0)
 
@@ -164,33 +167,37 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 		false,
 	)
 	if err != nil {
-		app.Event.Emit("coder:error", err.Error())
+		myErr := fmt.Errorf("Ошибка при создании алгоритма кодирования: %s", err.Error())
+		app.Event.Emit("coder:error", myErr.Error())
 		app.Event.Emit("simulation:error", "Ошибка при создании алгоритма кодирования")
-		app.Logger.Error(fmt.Sprintf("Ошибка при создании алгоритма кодирования: %s", err.Error()))
-		return simulationId
+		app.Logger.Error(myErr.Error())
+		return myErr
 	}
 	if err := s.coderService.codeMessages(data.Coder.MessageLength, data.Coder.PolynomialDegree, messages, codedMessages, algo, simulationId); err != nil {
-		app.Event.Emit("coder:error", err.Error())
+		myErr := fmt.Errorf("Ошибка при кодировании сообщений: %s", err.Error())
+		app.Event.Emit("coder:error", myErr.Error())
 		app.Event.Emit("simulation:error", "Ошибка при кодировании сообщений")
-		app.Logger.Error(fmt.Sprintf("Ошибка при кодировании сообщений: %s", err.Error()))
-		return simulationId
+		app.Logger.Error(myErr.Error())
+		return myErr
 	}
 	s.emitProgress(app, 60.0)
 
 	// применение ошибок
 	if err := s.applyErrors(codedMessages, errors, data.Coder.DataLength); err != nil {
+		myErr := fmt.Errorf("Ошибка при применении ошибок: %s", err.Error())
 		app.Event.Emit("simulation:error", "Ошибка при применении ошибок")
-		app.Logger.Error(fmt.Sprintf("Ошибка при применении ошибок: %s", err.Error()))
-		return simulationId
+		app.Logger.Error(myErr.Error())
+		return myErr
 	}
 	s.emitProgress(app, 80.0)
 
 	simulationStats, err := s.decoderService.decodeMessages(data.Coder.MessageLength, data.Coder.PolynomialDegree, messages, codedMessages, algo, uint64(data.ErrorProcessing.TotalUndetectedErrorsToStop), simulationId)
 	if err != nil {
-		app.Event.Emit("decoder:error", err.Error())
+		myErr := fmt.Errorf("Ошибка при дeкодировании сообщений: %s", err.Error())
+		app.Event.Emit("decoder:error", myErr.Error())
 		app.Event.Emit("simulation:error", "Ошибка при дeкодировании сообщений")
-		app.Logger.Error(fmt.Sprintf("Ошибка при дeкодировании сообщений: %s", err.Error()))
-		return simulationId
+		app.Logger.Error(myErr.Error())
+		return myErr
 	}
 	s.emitProgress(app, 99.0)
 
@@ -203,12 +210,23 @@ func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UU
 	}
 
 	if _, err := s.dataBaseService.writeSimulationResults(simaulationResults); err != nil {
+		myErr := fmt.Errorf("Ошибка при сохранении результатов: %s", err.Error())
 		app.Event.Emit("simulation:error", "Ошибка при сохранении результатов")
-		app.Logger.Error(fmt.Sprintf("Ошибка при сохранении результатов: %s", err.Error()))
-		return simulationId
+		app.Logger.Error(myErr.Error())
+		return myErr
 	}
 
 	app.Event.Emit("simulation:finished", simulationStats)
+
+	return nil
+}
+
+func (s *SimulationService) StartSimulation(data SimulationServiceStart) uuid.UUID {
+	simulationId := uuid.New()
+
+	go func() {
+		s.startSimulationInternal(data, simulationId)
+	}()
 
 	return simulationId
 }
