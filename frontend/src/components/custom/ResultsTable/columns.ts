@@ -2,7 +2,11 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { DataTableFeatures } from "./features";
 import { SimulationResult } from "@bindings/backend/services";
 
-const columnHelper = createColumnHelper<DataTableFeatures, SimulationResult>();
+export interface SimulationResultExtended extends SimulationResult {
+  acceptedPackets: number
+}
+
+const columnHelper = createColumnHelper<DataTableFeatures, SimulationResultExtended>();
 
 export const columns = columnHelper.columns([
   columnHelper.accessor("id", {
@@ -22,6 +26,9 @@ export const columns = columnHelper.columns([
   }),
   columnHelper.accessor("networkParams", {
     header: "Вероятность ошибки",
+  }),
+  columnHelper.accessor("acceptedPackets", {
+    header: "Правильных пакетов",
   }),
   columnHelper.accessor("detectedErrors", {
     header: "Обнаружено ошибок",

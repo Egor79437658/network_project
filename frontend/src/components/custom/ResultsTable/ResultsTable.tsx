@@ -1,9 +1,9 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useTable } from "@tanstack/react-table";
 import { features } from "./features";
-import { columns } from "./columns";
+import { columns, SimulationResultExtended } from "./columns";
 import { useAsyncList } from "@react-stately/data";
-import { SimulationResult, NetworkLineMode, DatabaseService } from "@bindings/backend/services";
+import { NetworkLineMode, DatabaseService } from "@bindings/backend/services";
 import {
   Table,
   TableBody,
@@ -19,13 +19,13 @@ import { DbFileTooltip } from "./DbFileTooltip";
 
 const PAGE_SIZE = 10;
 const NETWORK_COL_SPAN = 4;
-const TOTAL_COLUMNS = 12;
+const TOTAL_COLUMNS = 13;
 
 export const ResultsTable: FC = () => {
   const [allDataLoaded, setAllDataLoaded] = useState(false);
   const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
 
-  const list = useAsyncList<SimulationResult>({
+  const list = useAsyncList<SimulationResultExtended>({
     async load({ cursor }) {
       const offset = cursor ? Number(cursor) : 0;
       const res = await DatabaseService.GetSimulationResults({
@@ -37,7 +37,7 @@ export const ResultsTable: FC = () => {
       if (res.length < PAGE_SIZE) setAllDataLoaded(true);
 
       return {
-        items: res,
+        items: res.map(el => ({...el, acceptedPackets: el.totalTransmited - el.detectedErrors - el.undetectedErrors })),
         cursor: String(offset + PAGE_SIZE),
       };
     },
