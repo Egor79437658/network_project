@@ -23,7 +23,7 @@ export const startSimulation = (data: startSimulationData) => {
     );
   }
 
-  const polynomialDegree = Math.max(...JSON.parse(data.coder.polynomial))+1
+  const polynomialDegree = Math.max(...JSON.parse(data.coder.polynomial))
 
     data.coder.polynomial = transformPolynomial(
       PolynomialModeEnum.binary,
@@ -35,7 +35,7 @@ export const startSimulation = (data: startSimulationData) => {
     coder: {
       dataLength: data.coder.dataLength,
       polynomialDegree,
-      polynomial: parseInt(data.coder.polynomial, 2),
+      polynomial: parseInt(data.coder.polynomial.slice(1), 2), // из-за того что задаются только младшие степени
       messageLength: data.coder.dataLength - data.coder.polynomial.length+1
     },
   };
