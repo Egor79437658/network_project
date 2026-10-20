@@ -27,7 +27,7 @@ func (s *MessageGenerationService) ServiceStartup(ctx context.Context, options a
 }
 
 func (s *MessageGenerationService) emitProgress(app *application.App, progress float32) {
-	app.Event.Emit("data-generator:progress", progress)
+	app.Event.Emit("data-generation:progress", progress)
 }
 
 func (s *MessageGenerationService) generateMessages(messages []uint64, taskId uuid.UUID) error {
@@ -37,7 +37,8 @@ func (s *MessageGenerationService) generateMessages(messages []uint64, taskId uu
 	app.Event.Emit("data-generation:started", taskId)
 
 	// через сколько выполненых заданий отправлять прогресс
-	const batch = 10000
+	// const batch = 10000
+	batch := int64(max(messagesCount/100, 10000))
 
 	progress := make(chan int64, 64)
 	consumerDone := make(chan struct{})

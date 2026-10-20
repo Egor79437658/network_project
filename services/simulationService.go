@@ -94,7 +94,8 @@ func (s *SimulationService) applyErrors(data []uint64, errors []uint64, dataLeng
 	}
 
 	MessageLengthMask := uint64(1)<<uint64(dataLength) - 1
-	const batch = 10000
+	// const batch = 10000
+	batch := max(size/100, 10000)
 
 	for start := 0; start < size; start += batch {
 		end := min(start+batch, size)
@@ -149,7 +150,7 @@ func (s *SimulationService) startSimulationInternal(data SimulationServiceStart,
 		myErr := fmt.Errorf("Ошибка при генерации сообщений: %s", err.Error())
 		app.Event.Emit("data-generation:error", myErr.Error())
 		app.Event.Emit("simulation:error", "Ошибка при генерации сообщений")
-		app.Logger.Error(fmt.Sprintf(myErr.Error()))
+		app.Logger.Error(myErr.Error())
 		return myErr
 	}
 	s.emitProgress(app, 40.0)

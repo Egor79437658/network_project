@@ -50,7 +50,9 @@ func (s *DecoderService) decodeMessages(messageWidth uint8, polynomialDegree uin
 	ctx, cancel := context.WithCancel(s.ctx)
 	defer cancel()
 
-	const batch = 10000
+	// const batch = 10000
+	batch := int64(max(total/100, 10000))
+
 	progress := make(chan int64, 64)
 	consumerDone := make(chan struct{})
 
@@ -96,7 +98,7 @@ func (s *DecoderService) decodeMessages(messageWidth uint8, polynomialDegree uin
 
 				// достаем сообщения
 				received := codedMessages[i]
-				decodedMsg := received >> polynomialDegree
+				decodedMsg := (received >> polynomialDegree) & msgMask
 				receivedCRC := received & crcMask
 
 				binary.BigEndian.PutUint64(buf[:], decodedMsg)

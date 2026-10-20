@@ -40,7 +40,8 @@ func (s *CoderService) codeMessages(messageWidth uint8, polynomialDegree uint8, 
 	msgMask := uint64(1)<<messageWidth - 1
 
 	// через сколько выполненных заданий отправлять прогресс
-	const batch = 10000
+	// const batch = 10000
+	batch := int64(max(messagesCount/100, 10000))
 
 	progress := make(chan int64, 64)
 	consumerDone := make(chan struct{})

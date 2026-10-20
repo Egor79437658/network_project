@@ -72,7 +72,8 @@ func (s *ErrorGeneratorService) generateErrors(errors []uint64, np NetworkLineSt
 	errorsCount := len(errors)
 
 	// через сколько выполненых заданий отправлять прогресс
-	const batch = 10000
+	// const batch = 10000
+	batch := int64(max(errorsCount/100, 10000))
 
 	app.Event.Emit("error-generation:started", taskId)
 
@@ -126,7 +127,7 @@ func (s *ErrorGeneratorService) generateErrors(errors []uint64, np NetworkLineSt
 					errors[i] = calcError(decisionsPerWord, rng, decisionMask, threshold, decisionBits)
 					// var err uint64
 					// for j := 0; j < 64; j++ {
-					// 	if rng.Float32() < np.IndependedPropability {
+					// 	if rng.Float64() < np.IndependedPropability {
 					// 		err |= 1 << j
 					// 	}
 					// }
@@ -231,7 +232,7 @@ func (s *ErrorGeneratorService) generateErrors(errors []uint64, np NetworkLineSt
 					// 	p = np.PropabilityToGoBad
 					// }
 					// for j := 0; j < 64; j++ {
-					// 	if rng.Float32() < p {
+					// 	if rng.Float64() < p {
 					// 		err |= 1 << j
 					// 	}
 					// }
