@@ -20,7 +20,7 @@ tasks:
           OBFUSCATED: '{{.OBFUSCATED}}'
           GARBLE_ARGS: '{{.GARBLE_ARGS}}'
     vars:
-      DEFAULT_OUTPUT: '{{.BIN_DIR}}/{{.APP_NAME}}'
+      DEFAULT_OUTPUT: '{{.BIN_DIR}}/{{.APP_NAME}}_darwin'
       OUTPUT: '{{ .OUTPUT | default .DEFAULT_OUTPUT }}'
 
   build:native:
@@ -45,7 +45,7 @@ tasks:
       - '{{if eq .OBFUSCATED "true"}}garble {{.GARBLE_ARGS}} build{{else}}go build{{end}} {{.BUILD_FLAGS}} -o "{{.OUTPUT}}"'
     vars:
       BUILD_FLAGS: '{{if eq .DEV "true"}}{{if or .EXTRA_TAGS (eq .OBFUSCATED "true")}}-tags {{if eq .OBFUSCATED "true"}}wails_obfuscated{{if .EXTRA_TAGS}},{{end}}{{end}}{{.EXTRA_TAGS}} {{end}}-buildvcs=false -gcflags=all="-l"{{else}}-tags production{{if eq .OBFUSCATED "true"}},wails_obfuscated{{end}}{{if .EXTRA_TAGS}},{{.EXTRA_TAGS}}{{end}} -trimpath -buildvcs=false -ldflags="-w -s"{{end}}'
-      DEFAULT_OUTPUT: '{{.BIN_DIR}}/{{.APP_NAME}}'
+      DEFAULT_OUTPUT: '{{.BIN_DIR}}/{{.APP_NAME}}}_darwin'
       OUTPUT: '{{ .OUTPUT | default .DEFAULT_OUTPUT }}'
     env:
       GOOS: darwin
@@ -111,7 +111,7 @@ tasks:
     summary: Creates universal binary using wails3 tool lipo (Linux/Windows)
     internal: true
     cmds:
-      - wails3 tool lipo -output "{{.BIN_DIR}}/{{.APP_NAME}}" -input "{{.BIN_DIR}}/{{.APP_NAME}}-amd64" -input "{{.BIN_DIR}}/{{.APP_NAME}}-arm64"
+      - wails3 tool lipo -output "{{.BIN_DIR}}/{{.APP_NAME}}_darwin_uni" -input "{{.BIN_DIR}}/{{.APP_NAME}}-amd64" -input "{{.BIN_DIR}}/{{.APP_NAME}}-arm64"
       - rm -f "{{.BIN_DIR}}/{{.APP_NAME}}-amd64" "{{.BIN_DIR}}/{{.APP_NAME}}-arm64"
 
   package:
