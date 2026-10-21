@@ -38,7 +38,7 @@ func (s *MessageGenerationService) generateMessages(messages []uint64, taskId uu
 
 	// через сколько выполненых заданий отправлять прогресс
 	// const batch = 10000
-	batch := int64(max(messagesCount/100, 10000))
+	batch := int64(min(messagesCount/100, 100000))
 
 	progress := make(chan int64, 64)
 	consumerDone := make(chan struct{})

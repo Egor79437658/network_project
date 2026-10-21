@@ -51,7 +51,7 @@ func (s *DecoderService) decodeMessages(messageWidth uint8, polynomialDegree uin
 	defer cancel()
 
 	// const batch = 10000
-	batch := int64(max(total/100, 10000))
+	batch := int64(min(total/100, 10000))
 
 	progress := make(chan int64, 64)
 	consumerDone := make(chan struct{})

@@ -72,8 +72,8 @@ func (s *ErrorGeneratorService) generateErrors(errors []uint64, np NetworkLineSt
 	errorsCount := len(errors)
 
 	// через сколько выполненых заданий отправлять прогресс
-	// const batch = 10000
-	batch := int64(max(errorsCount/100, 10000))
+	const batch = 10000
+	// batch := int64(min(errorsCount/100, 10000))
 
 	app.Event.Emit("error-generation:started", taskId)
 

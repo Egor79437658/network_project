@@ -95,7 +95,7 @@ func (s *SimulationService) applyErrors(data []uint64, errors []uint64, dataLeng
 
 	MessageLengthMask := uint64(1)<<uint64(dataLength) - 1
 	// const batch = 10000
-	batch := max(size/100, 10000)
+	batch := max(min(size/100, 10000), 10000)
 
 	for start := 0; start < size; start += batch {
 		end := min(start+batch, size)
