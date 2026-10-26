@@ -36,8 +36,16 @@ export const ResultsTable: FC = () => {
 
       if (res.length < PAGE_SIZE) setAllDataLoaded(true);
 
+      const items = res.map(el => {
+
+        const polynomialDegree = el.dataLength-el.messageLength
+        const polynomial = 2**polynomialDegree + el.polynomial
+        return {...el, acceptedPackets: el.totalTransmited - el.detectedErrors - el.undetectedErrors, polynomial: polynomial }
+
+      })
+
       return {
-        items: res.map(el => ({...el, acceptedPackets: el.totalTransmited - el.detectedErrors - el.undetectedErrors })),
+        items: items,
         cursor: String(offset + PAGE_SIZE),
       };
     },
