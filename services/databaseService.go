@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -77,7 +77,7 @@ func (s *DatabaseService) ServiceStartup(ctx context.Context, options applicatio
 	dbFile := filepath.Join(targetDir, "app.db")
 	s.dbFilePath = dbFile
 
-	s.db, err = sql.Open("sqlite3", dbFile)
+	s.db, err = sql.Open("sqlite", dbFile)
 	if err != nil {
 		return err
 	}
